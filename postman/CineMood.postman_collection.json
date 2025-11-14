@@ -1,0 +1,202 @@
+{
+  "info": {
+    "_postman_id": "c1e8f4a0-4a4c-4b1d-b5a0-0000cinemood",
+    "name": "CineMood API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api/v1" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Public",
+      "item": [
+        {
+          "name": "GET /moods",
+          "request": { "method": "GET", "url": "{{baseUrl}}/moods" }
+        },
+        {
+          "name": "GET /filmes (paginado/filtros)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/filmes?page=1&limit=10&titulo=amor&anoLancamento=2020",
+              "host": ["{{baseUrl}}"],
+              "path": ["filmes"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "titulo", "value": "amor" },
+                { "key": "anoLancamento", "value": "2020" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /filmes/{idFilme}",
+          "request": { "method": "GET", "url": "{{baseUrl}}/filmes/1" }
+        },
+        {
+          "name": "GET /filmes/mood/{idMood}",
+          "request": { "method": "GET", "url": "{{baseUrl}}/filmes/mood/1?page=1&limit=10" }
+        },
+        {
+          "name": "GET /pessoas (paginado/filtro)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/pessoas?nome=joao&page=1&limit=10" }
+        },
+        {
+          "name": "GET /pessoas/filme/{idFilme}",
+          "request": { "method": "GET", "url": "{{baseUrl}}/pessoas/filme/1" }
+        },
+        {
+          "name": "GET /health",
+          "request": { "method": "GET", "url": "http://localhost:3000/health" }
+        },
+        {
+          "name": "GET /docs",
+          "request": { "method": "GET", "url": "http://localhost:3000/docs" }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "POST /admin/login",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"admin\",\n  \"senha\": \"minha_senha\"\n}"
+            },
+            "url": "{{baseUrl}}/admin/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "try {",
+                  "  var data = pm.response.json();",
+                  "  if (data.token) { pm.collectionVariables.set('token', data.token); }",
+                  "} catch(e) {}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /filmes",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": "{{baseUrl}}/filmes"
+          }
+        },
+        {
+          "name": "POST /filmes",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Um Filme\",\n  \"sinopse\": \"Sinopse...\",\n  \"anoLancamento\": 2020,\n  \"posterUrl\": \"https://exemplo/poster.jpg\",\n  \"fraseEfeito\": \"Frase\"\n}"
+            },
+            "url": "{{baseUrl}}/filmes"
+          }
+        },
+        {
+          "name": "PUT /filmes/{idFilme}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"Filme Atualizado\"\n}" },
+            "url": "{{baseUrl}}/filmes/1"
+          }
+        },
+        {
+          "name": "DELETE /filmes/{idFilme}",
+          "request": {
+            "method": "DELETE",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": "{{baseUrl}}/filmes/1"
+          }
+        },
+        {
+          "name": "GET /pessoas",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": "{{baseUrl}}/pessoas"
+          }
+        },
+        {
+          "name": "POST /pessoas",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"nome\": \"João da Silva\",\n  \"biografia\": \"Bio...\",\n  \"fotoUrl\": \"https://exemplo/foto.jpg\"\n}" },
+            "url": "{{baseUrl}}/pessoas"
+          }
+        },
+        {
+          "name": "PUT /pessoas/{idPessoa}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"nome\": \"João Atualizado\"\n}" },
+            "url": "{{baseUrl}}/pessoas/1"
+          }
+        },
+        {
+          "name": "DELETE /pessoas/{idPessoa}",
+          "request": {
+            "method": "DELETE",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": "{{baseUrl}}/pessoas/1"
+          }
+        },
+        {
+          "name": "POST /filmes/associar-mood",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"idFilme\": 1,\n  \"idsMood\": [1,2,3]\n}" },
+            "url": "{{baseUrl}}/filmes/associar-mood"
+          }
+        },
+        {
+          "name": "POST /filmes/associar-pessoa",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"idFilme\": 1,\n  \"idPessoa\": 1,\n  \"papel\": \"ator\",\n  \"personagem\": \"Fulano\"\n}" },
+            "url": "{{baseUrl}}/filmes/associar-pessoa"
+          }
+        }
+      ]
+    }
+  ]
+}
+

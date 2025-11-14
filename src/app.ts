@@ -1,0 +1,34 @@
+import express from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
+import pinoHttp from 'pino-http';
+import swaggerUi from 'swagger-ui-express';
+import { openapi } from './config/swagger';
+import { errorHandler } from './middlewares/error';
+import { publicRouter } from './routes/public';
+import { adminRouter } from './routes/admin';
+import { env } from './config/env';
+import { logger } from './config/logger';
+
+export function buildApp() {
+  const app = express();
+  app.use(express.json());
+  app.use(helmet());
+  app.use(cors({ origin: env.corsOrigin }));
+  app.use(pinoHttp({ logger }));
+
+  app.get('/health', (_req, res) => res.json({ status: 'ok' }));
+
+  app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapi));
+  app.get('/docs-json', (_req, res) => res.json(openapi));
+
+  const api = express.Router();
+  api.use(publicRouter);
+  api.use(adminRouter);
+
+  app.use('/api/v1', api);
+
+  app.use(errorHandler);
+  return app;
+}
+

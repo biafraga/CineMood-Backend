@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model administrador {
+  ID        Int    @id @default(autoincrement())
+  Login     String @db.VarChar(100)
+  SenhaHash String @db.VarChar(255)
+
+  @@map("administrador")
+}
+
+model filme {
+  ID            Int            @id @default(autoincrement())
+  Titulo        String         @db.VarChar(255)
+  Sinopse       String?        @db.Text
+  AnoLancamento Int?
+  PosterUrl     String?        @db.VarChar(500)
+  FraseEfeito   String?        @db.VarChar(255)
+  StatusFilme   Boolean?       @db.Bit(1)
+  deletadoEm    DateTime?      @db.DateTime(0)
+  filme_mood    filme_mood[]
+  filme_pessoa  filme_pessoa[]
+
+  @@map("filme")
+}
+
+model mood {
+  ID         Int          @id @default(autoincrement())
+  Nome       String       @db.VarChar(100)
+  Descricao  String?      @db.Text
+  IconeUrl   String?      @db.VarChar(255)
+  StatusMood Boolean?     @db.Bit(1)
+  filme_mood filme_mood[]
+
+  @@map("mood")
+}
+
+model pessoa {
+  ID           Int            @id @default(autoincrement())
+  Nome         String         @db.VarChar(150)
+  Biografia    String?        @db.Text
+  FotoUrl      String?        @db.VarChar(255)
+  deletadoEm   DateTime?      @db.DateTime(0)
+  filme_pessoa filme_pessoa[]
+
+  @@map("pessoa")
+}
+
+model filme_mood {
+  IDFilme Int
+  IDMood  Int
+  filme   filme @relation(fields: [IDFilme], references: [ID], onUpdate: Restrict, map: "filme_mood_ibfk_1")
+  mood    mood  @relation(fields: [IDMood], references: [ID], onUpdate: Restrict, map: "filme_mood_ibfk_2")
+
+  @@id([IDFilme, IDMood])
+  @@index([IDMood], map: "IDMood")
+  @@map("filme_mood")
+}
+
+model filme_pessoa {
+  IDFilme    Int
+  IDPessoa   Int
+  Papel      String  @db.VarChar(50)
+  Personagem String? @db.VarChar(100)
+  filme      filme   @relation(fields: [IDFilme], references: [ID], onUpdate: Restrict, map: "filme_pessoa_ibfk_1")
+  pessoa     pessoa  @relation(fields: [IDPessoa], references: [ID], onUpdate: Restrict, map: "filme_pessoa_ibfk_2")
+
+  @@id([IDFilme, IDPessoa, Papel])
+  @@index([IDPessoa], map: "IDPessoa")
+  @@map("filme_pessoa")
+}
