@@ -1,0 +1,70 @@
+# ============================================
+# Compiled output
+# ============================================
+/dist
+/build
+/out
+/tmp
+/temp
+
+# ============================================
+# Node
+# ============================================
+/node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# ============================================
+# Environment (IMPORTANT – never commit)
+/.env
+/.env.local
+/.env.development.local
+/.env.production.local
+
+# ============================================
+# TypeScript
+# ============================================
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# ============================================
+# Logs
+# ============================================
+/logs
+*.log
+*.log.*
+
+# ============================================
+# Coverage
+# ============================================
+/coverage
+
+# ============================================
+# IDEs and Editors
+# ============================================
+.idea/
+.project
+.classpath
+.settings/
+*.launch
+*.sublime-workspace
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# ============================================
+# Misc
+# ============================================
+/libpeerconnection.log
+/connect.lock
+
+# ============================================
+# System files
+# ============================================
+.DS_Store
+Thumbs.db

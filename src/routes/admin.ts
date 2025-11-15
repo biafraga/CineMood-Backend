@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
 import { adminLogin } from '../controllers/authController';
 import { authAdmin } from '../middlewares/auth';
 import { loginRateLimiter } from '../middlewares/rateLimit';
@@ -17,9 +17,11 @@ import {
 
 export const adminRouter = Router();
 
-adminRouter.post('/admin/login', loginRateLimiter, adminLogin);
-
-adminRouter.use(authAdmin);
+adminRouter.post(
+  '/admin/login',
+  loginRateLimiter,
+  adminLogin
+);
 
 adminRouter.get('/filmes', adminListFilmes);
 adminRouter.post('/filmes', adminCreateFilme);

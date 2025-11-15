@@ -12,10 +12,11 @@ import { logger } from './config/logger';
 
 export function buildApp() {
   const app = express();
-  app.use(express.json());
-  app.use(helmet());
-  app.use(cors({ origin: env.corsOrigin }));
-  app.use(pinoHttp({ logger }));
+  app.use(express.json());     // 1. PRIMEIRO (Ler o pacote imediatamente!)
+  app.use(cors());             // 2. SEGUNDO (Liberar o acesso)
+  app.use(helmet());           // 3. TERCEIRO (Segurança)
+  app.use(pinoHttp({ logger })); // 4. QUARTO (Log)
+
 
   app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
