@@ -1,6 +1,6 @@
 import { listMoods } from '../repositories/moodRepo';
 
-export function listarMoods() {
-  return listMoods();
+// Adicione os parâmetros de página e limite
+export function listarMoods(page: number, limit: number) {
+  return listMoods(page, limit);
 }
-
