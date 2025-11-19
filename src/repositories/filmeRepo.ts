@@ -18,36 +18,35 @@ type FilmeUpdateData = Partial<FilmeData>;
 export async function listFilmes(params: { titulo?: string; anoLancamento?: number; page?: number; limit?: number }) {
   const { titulo, anoLancamento, page = 1, limit = 20 } = params;
 
-  // Condição de busca (filtro)
   const where: any = {
-    ...(titulo ? { Titulo: { contains: titulo } } : {}), // CORRIGIDO: Titulo
+    ...(titulo ? { Titulo: { contains: titulo } } : {}),
     ...(anoLancamento ? { AnoLancamento: anoLancamento } : {}),
     ...(notDeleted.deletadoEm !== undefined ? { deletadoEm: null } : {}),
   };
 
-  // Usa $transaction para pegar dados E o total
   const [data, total] = await prisma.$transaction([
     prisma.filme.findMany({
       where,
-      orderBy: { ID: 'desc' }, // CORRIGIDO: ID
+      orderBy: { ID: 'desc' },
       skip: (page - 1) * limit,
       take: limit,
+      include: {
+        filme_mood: { include: { mood: true } },      // moods relacionados
+        filme_pessoa: { include: { pessoa: true } },  // pessoas relacionadas
+      },
     }),
-    prisma.filme.count({ where }) // ADICIONADO: Pega o total
+    prisma.filme.count({ where }),
   ]);
 
-  return { data, total }; // ATUALIZADO: Retorna o objeto
+  return { data, total };
 }
+
 
 // 3. Funções restantes CORRIGIDAS (id -> ID)
 export function getFilme(id: number) {
   return prisma.filme.findFirst({
     where: { ID: id, ...(notDeleted.deletadoEm !== undefined ? { deletadoEm: null } : {}) }, // CORRIGIDO: ID
   });
-}
-
-export function createFilme(data: FilmeData) { // CORRIGIDO: Usa o tipo
-  return prisma.filme.create({ data });
 }
 
 export function updateFilme(id: number, data: FilmeUpdateData) { // CORRIGIDO: Usa o tipo
@@ -92,4 +91,7 @@ export async function detalhesDoFilme(idFilme: number) {
       .filter((p) => p.Papel?.toLowerCase() !== 'ator' && p.Papel?.toLowerCase() !== 'atriz')
       .map((p) => ({ idPessoa: p.IDPessoa, nome: p.pessoa.Nome, papel: p.Papel, personagem: p.Personagem, fotoUrl: p.pessoa.FotoUrl })),
   };
+
+  
+  
 }

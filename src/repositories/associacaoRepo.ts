@@ -1,21 +1,35 @@
 import { prisma } from './prisma';
 
-export async function associarMoods(idFilme: number, idsMood: number[]) {
-  const data = idsMood.map((id) => ({ IDFilme: idFilme, IDMood: id }));
-  await prisma.$transaction([
-    prisma.filme_mood.deleteMany({ where: { IDFilme: idFilme, NOT: { IDMood: { in: idsMood } } } }),
-    prisma.filme_mood.createMany({ data, skipDuplicates: true }),
-  ]);
-}
+// associa 1 filme com vários moods
+export async function associarMoodAoFilme(idFilme: number, idsMood: number[]) {
+  if (!idsMood || idsMood.length === 0) return;
 
-export function associarPessoa(params: { idFilme: number; idPessoa: number; papel: string; personagem?: string }) {
-  const { idFilme, idPessoa, papel, personagem } = params;
-  return prisma.filme_pessoa.upsert({
-    where: {
-      IDFilme_IDPessoa_papel: { IDFilme: idFilme, IDPessoa: idPessoa, papel },
-    },
-    create: { IDFilme: idFilme, IDPessoa: idPessoa, papel, personagem },
-    update: { personagem },
+  const data = idsMood.map((idMood) => ({
+    IDFilme: idFilme,
+    IDMood: idMood,
+  }));
+
+  await prisma.filme_mood.createMany({
+    data,
+    skipDuplicates: true, // não quebra se já existir
   });
 }
 
+// associa 1 pessoa a 1 filme (ator ou diretor)
+export async function associarPessoaAoFilme(options: {
+  idFilme: number;
+  idPessoa: number;
+  papel: string;
+  personagem?: string;
+}) {
+  const { idFilme, idPessoa, papel, personagem } = options;
+
+  await prisma.filme_pessoa.create({
+    data: {
+      IDFilme: idFilme,
+      IDPessoa: idPessoa,
+      Papel: papel,
+      Personagem: personagem ?? null,
+    },
+  });
+}
