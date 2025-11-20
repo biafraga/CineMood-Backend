@@ -11,7 +11,7 @@ export async function associarMoodAoFilme(idFilme: number, idsMood: number[]) {
 
   await prisma.filme_mood.createMany({
     data,
-    skipDuplicates: true, // não quebra se já existir
+    skipDuplicates: true,
   });
 }
 
